@@ -7,6 +7,8 @@ Create Date: 2026-04-20 18:48:29.457341
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import inspect
+
 
 
 # revision identifiers, used by Alembic.
@@ -15,9 +17,14 @@ down_revision = 'd6d1bfd04951'
 branch_labels = None
 depends_on = None
 
-
 def upgrade():
-    op.execute("ALTER TABLE company ADD COLUMN name VARCHAR(100);")
+    conn = op.get_bind()
+    inspector = inspect(conn)
+
+    columns = [col['name'] for col in inspector.get_columns('company')]
+
+    if 'name' not in columns:
+        op.add_column('company', sa.Column('name', sa.String(100)))
 
 
 
