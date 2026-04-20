@@ -5,20 +5,33 @@ from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
 from flask_smorest import Api
 from app.celery_app import make_celery
-
+from config import MasterConfig, DevelopConfig
+import os
 # --------- Extensions --------- #
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 jwt = JWTManager()
 
+
+
+env = os.getenv("APP_ENV", "develop")
+
+import os
+
+env = os.getenv("APP_ENV", "develop")
+
+if env == "master":
+    db_uri = "sqlite:///test_master.db"
+else:
+    db_uri = "sqlite:///test_develop.db"
 def create_app():
     flask_app = Flask(__name__)
 
     # --------- Config --------- #
     flask_app.config.from_mapping(
         SECRET_KEY='supersecretkey',
-        SQLALCHEMY_DATABASE_URI='sqlite:///tasks.db',
+       SQLALCHEMY_DATABASE_URI=db_uri,
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         JWT_SECRET_KEY='super-secret-jwt-key',
         # Swagger / OpenAPI

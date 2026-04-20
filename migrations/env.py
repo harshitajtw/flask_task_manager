@@ -2,7 +2,7 @@ import logging
 from logging.config import fileConfig
 
 from flask import current_app
-
+import os
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -14,6 +14,17 @@ config = context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
+
+import os
+
+env = os.getenv("APP_ENV", "develop")
+
+if env == "master":
+    db_uri = "sqlite:///test_master.db"
+else:
+    db_uri = "sqlite:///test_develop.db"
+
+config.set_main_option("sqlalchemy.url", db_uri)
 
 def get_engine():
     try:
@@ -36,7 +47,6 @@ def get_engine_url():
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-config.set_main_option('sqlalchemy.url', get_engine_url())
 target_db = current_app.extensions['migrate'].db
 
 # other values from the config, defined by the needs of env.py,
