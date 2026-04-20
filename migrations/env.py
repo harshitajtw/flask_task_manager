@@ -5,8 +5,11 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from app.models import db
+import sys
+import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from app.models import db
 config = context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
